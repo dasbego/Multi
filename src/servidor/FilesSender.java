@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,15 +29,20 @@ public class FilesSender implements Runnable {
     FileInputStream fis = null;
     BufferedInputStream bis = null;
     OutputStream os = null;
-    private Socket socket;
+    private ServerSocket socket;
     private File archivo = null;
-   
+   private Socket sock = null;
     public FilesSender(String path,String ip,String socketPort) {
           this.path = path;
-          
+          System.out.println("Data: path: "+ path + "ip: "+ip+ " puerto: "+ socketPort);
             try{
-                socket = new Socket(ip, Integer.parseInt(socketPort));
+                
+                socket = new ServerSocket(13267);
+                sock = socket.accept();
+                
+                System.out.println("hola");
                 archivo = new File(path);
+                System.out.println("hola2");
             }catch(Exception e)
             {
                 System.out.println(e.toString());
@@ -46,12 +52,14 @@ public class FilesSender implements Runnable {
     @Override
     public void run() {
         try{
+            System.out.println("Realizando prueba");
             byte [] mybytearray  = new byte [(int)archivo.length()];
+            System.out.println("Realizando prueba");
             fis = new FileInputStream(archivo);
             bis = new BufferedInputStream(fis);
             bis.read(mybytearray,0,mybytearray.length);
-            os = socket.getOutputStream();
-
+            os = sock.getOutputStream();
+               
             System.out.println("Enviando " + path + "(" + mybytearray.length + " bytes)");
             os.write(mybytearray,0,mybytearray.length);
             os.flush();

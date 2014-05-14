@@ -30,6 +30,9 @@ public class ServerUI extends javax.swing.JFrame {
         // Thread hilo = new Thread(new Servidor());
         // hilo.start();
         grupos = Grupos.cargarNodos();
+        
+        Thread checaCaducidad = new Thread(new checaExpirar(grupos)); // se crea un thread que observa los grupos y su caducidad
+        checaCaducidad.start();
 
         for (Nodo node : grupos) {
             File newFile = new File(node.getPathFile());
