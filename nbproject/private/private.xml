@@ -3,13 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/Servidor.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/ServerUI.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/cliente/Cliente.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/RecepcionClientesGrupo.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/FilesSender.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/RecepcionClientes.java</file>
-            <file>file:/C:/Users/Julio/Documents/GitHub/Multi/src/servidor/GrupoServer.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/cliente/Cliente.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/cliente/pinWindow.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/FilesSender.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/ServerUI.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/RecepcionClientesGrupo.java</file>
         </group>
     </open-files>
 </project-private>

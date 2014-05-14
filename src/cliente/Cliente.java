@@ -59,7 +59,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             System.out.println("Abriendo socket...");
             Thread hilo = new Thread(this);
             hilo.start();
-            socket = new Socket("10.49.183.94", Integer.parseInt(Puerto));
+            socket = new Socket("127.0.0.1", Integer.parseInt(Puerto));
             datoEntrada = new DataInputStream(socket.getInputStream());
             datoSalida = new DataOutputStream(socket.getOutputStream());
             System.out.println("Se manda: NewUser*"+UserName+" :");
