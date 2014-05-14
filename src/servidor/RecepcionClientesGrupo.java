@@ -32,7 +32,7 @@ public class RecepcionClientesGrupo implements Runnable{
             datosSalida = new DataOutputStream(socket.getOutputStream());            
         }catch(Exception e)
         {
-            
+            System.out.println(e.toString());
         }
     }
     
@@ -49,8 +49,11 @@ public class RecepcionClientesGrupo implements Runnable{
                     datosSalida.writeUTF(getFilesFromPath(node.getPathFile()));
                 }
               
+                //FilePath*IP*Puerto*PathAlArchivo
                 if(mensaje.contains("FilePath*")){
-                      
+                      String[] arrayData = mensaje.split("*");
+                      Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
+                      SenderThread.start();
                 }
                 if(mensaje.contains("NewFile*")){
                       
