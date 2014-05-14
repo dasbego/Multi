@@ -50,14 +50,15 @@ public class RecepcionClientesGrupo implements Runnable{
                 }
               
                 //FilePath*IP*Puerto*PathAlArchivo
-                if(mensaje.contains("FilePath*")){
+                else if(mensaje.contains("FilePath*")){
                       String[] arrayData = mensaje.split("\\*");
                       Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
                       SenderThread.start();
                 }
-                if(mensaje.contains("NewFile*")){
+                else if(mensaje.contains("NewFile*")){
                       
-                }
+                }else
+                    datosSalida.writeUTF(mensaje);
             }                
         } catch (Exception e) {
         }
