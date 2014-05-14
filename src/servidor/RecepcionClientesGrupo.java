@@ -49,7 +49,15 @@ public class RecepcionClientesGrupo implements Runnable{
                     datosSalida.writeUTF(getFilesFromPath(node.getPathFile()));
                 }
               
-               datosSalida.writeUTF(mensaje);
+                if(mensaje.contains("FilePath*")){
+                      
+                }
+                if(mensaje.contains("NewFile*")){
+                      
+                }
+                
+                
+                datosSalida.writeUTF(mensaje);
                 
                     
             }                
