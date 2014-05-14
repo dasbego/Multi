@@ -59,7 +59,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             System.out.println("Abriendo socket...");
             Thread hilo = new Thread(this);
             hilo.start();
-            socket = new Socket("192.168.1.78", Integer.parseInt(Puerto));
+            socket = new Socket("127.0.0.1", Integer.parseInt(Puerto));
             datoEntrada = new DataInputStream(socket.getInputStream());
             datoSalida = new DataOutputStream(socket.getOutputStream());
             System.out.println("Se manda: NewUser*"+UserName+" :");
@@ -276,8 +276,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             //sacar IP
             String IP = InetAddress.getLocalHost().getHostAddress();
             //petición para hacer download
-            System.out.println("FilePath*"+IP+"*"+"PUERTO"+"*"+Path);
-            datoSalida.writeUTF("FilePath*"+IP+"*"+"PUERTO"+"*"+Path);
+            datoSalida.writeUTF("FilePath*"+IP+"*"+Path);
             
             String info = datoEntrada.readUTF();
             
@@ -394,9 +393,10 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
 
     @Override
     public void run() {
+        while(true){
             try {
-                //String info = datoEntrada.readUTF();
-                String info = "filesNames*path/pito.txt*path/verga.pdf";
+                String info = datoEntrada.readUTF();
+                //String info = "filesNames*path/pito.txt*path/verga.pdf";
                 if(info.contains("filesNames*")){
                     int ind = 0;
                     String Paths[] = separatePaths(info);
@@ -414,8 +414,9 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                         ind++;
                     }
                 }
-            }catch (Exception ex) {
+            }catch (IOException ex) {
                 Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
     }
 }

@@ -69,12 +69,12 @@ public class RecepcionClientesGrupo implements Runnable{
     }    
      private String getFilesFromPath(String path)
         {
-            String resultFiles = "*filesNames*";
+            String resultFiles = "filesNames*";
             File directory = new File(path);
             File[] contents = directory.listFiles();
 
             for ( File f : contents) {
-                resultFiles+=f.getPath() + "-";
+                resultFiles+=f.getPath() + "*";
                 System.out.println(resultFiles);
             }
             return resultFiles;        
