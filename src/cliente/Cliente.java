@@ -278,6 +278,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             //petición para hacer download
             datoSalida.writeUTF("FilePath*"+IP+"*"+Path);
             
+            //recibo string con puerto
             String info = datoEntrada.readUTF();
             
             //separamos string FilePath*IP*Puerto*PathAlArchivo

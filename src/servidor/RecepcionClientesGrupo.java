@@ -51,7 +51,7 @@ public class RecepcionClientesGrupo implements Runnable{
               
                 //FilePath*IP*Puerto*PathAlArchivo
                 if(mensaje.contains("FilePath*")){
-                      String[] arrayData = mensaje.split("*");
+                      String[] arrayData = mensaje.split("\\*");
                       Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
                       SenderThread.start();
                 }
