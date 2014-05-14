@@ -59,15 +59,16 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             System.out.println("Abriendo socket...");
             Thread hilo = new Thread(this);
             hilo.start();
-            socket = new Socket("127.0.0.1", Integer.parseInt(Puerto));
+            socket = new Socket("10.49.183.94", Integer.parseInt(Puerto));
             datoEntrada = new DataInputStream(socket.getInputStream());
             datoSalida = new DataOutputStream(socket.getOutputStream());
             System.out.println("Se manda: NewUser*"+UserName+" :");
             datoSalida.writeUTF("NewUser*"+UserName+" :");
+            System.out.println("Enviado");
             
            
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.toString());
         }
     }
 
@@ -271,6 +272,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     private void petitionForDownload(int index){
         try {
             //encontrar path correspondiente al index
+            
             String Path = downloadPaths.get(index);
             
             //sacar IP
@@ -300,6 +302,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                 public void run() {
                     try {
                         //conexion a socket para subir 
+                        System.out.println("procesando descarga...");
                         Socket downloadSocket = new Socket(data[1], Integer.parseInt(data[2]));
                         
                         DataInputStream DownloadDatoEntrada = new DataInputStream(socket.getInputStream());;
@@ -312,12 +315,13 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                         
                         // receive file
                         byte [] mybytearray  = new byte [FILESIZE];
+                        System.out.println("Recibiendo datos de socket...");
                         InputStream is = downloadSocket.getInputStream();
                         fos = new FileOutputStream(data[3]);
                         bos = new BufferedOutputStream(fos);
                         bytesRead = is.read(mybytearray,0,mybytearray.length);
                         current = bytesRead;
-
+                        
                         do {
                            bytesRead =
                               is.read(mybytearray, current, (mybytearray.length-current));
@@ -397,6 +401,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         while(true){
             try {
                 String info = datoEntrada.readUTF();
+                System.out.println("Llega el string de :"+info);
                 //String info = "filesNames*path/pito.txt*path/verga.pdf";
                 if(info.contains("filesNames*")){
                     int ind = 0;
@@ -414,9 +419,15 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                         downloadPaths.put(ind, string);
                         ind++;
                     }
+                }else if(info.contains("UpdateFiles*"))
+                {
+                    
+                }else{
+                    txtArea.setText(txtArea.getText() + "\n"+info);
                 }
-            }catch (IOException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    
+            }catch (Exception ex) {
+                System.out.println("Error: "+ex.toString());
             }
         }
     }

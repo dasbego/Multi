@@ -44,7 +44,7 @@ public class RecepcionClientesGrupo implements Runnable{
                 String mensaje = datosEntrada.readUTF();
                 System.out.println("Al servidor de pin:"+node.getPin()+ " ha llegado: " +mensaje);
                 
-                if(mensaje.contains("NewUser*")){
+                if (mensaje.contains("NewUser*")){
                     System.out.println("Ingreso de nuevo usuario, mandando: "+getFilesFromPath(node.getPathFile()));
                     datosSalida.writeUTF(getFilesFromPath(node.getPathFile()));
                 }
@@ -58,11 +58,6 @@ public class RecepcionClientesGrupo implements Runnable{
                 if(mensaje.contains("NewFile*")){
                       
                 }
-                
-                
-                datosSalida.writeUTF(mensaje);
-                
-                    
             }                
         } catch (Exception e) {
         }

@@ -7,7 +7,9 @@
 package servidor;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -27,6 +29,32 @@ public class ServerUI extends javax.swing.JFrame {
         //Comenzar hilo que checara que grpos dentro de "grupos" ya caducaron para cerrarlos
         // Thread hilo = new Thread(new Servidor());
         // hilo.start();
+        grupos = Grupos.cargarNodos();
+
+        for (Nodo node : grupos) {
+            File newFile = new File(node.getPathFile());
+            try {
+                    if (!newFile.exists()) {
+                        newFile.mkdir();
+                        System.out.println("Se creo dir: " + newFile.getName());
+                        node.setPathFile(newFile.getPath());
+                    } else {
+                        //System.out.println("Ya existe dicho directorio");
+                    }
+
+                    if (node.getNumSocket() > puertoNum) {
+                        puertoNum = node.getNumSocket();
+                    }
+
+                    //Comenzar hilo que checará cuando llegue algo a grupo especificado
+                    Thread hiloEspecificoGrupo = new Thread(new GrupoServer(node.getNumSocket(), node));
+                    hiloEspecificoGrupo.start();
+
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
+
+        }
         Thread hiloServerFirst = new Thread(new Servidor(grupos));
         hiloServerFirst.start();
                 
@@ -150,44 +178,49 @@ public class ServerUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCreateActionPerformed
 
-   private void insertaGrupo()
-   {
-       if(!txtNameGroup.getText().equals("") && !txtPIN.getText().equals("") )
-       {
-           String[] arrayDate = txtDate.getText().split("/");
-           
-           Nodo node = new Nodo(txtNameGroup.getText().toString(), txtPIN.getText().toString(), Integer.parseInt(arrayDate[0]) , Integer.parseInt(arrayDate[1]), Integer.parseInt(arrayDate[2]), puertoNum);
-           puertoNum++;
-           
-           
-           File newFile = new File(node.getPin());
-           try{
-               
-               if (!newFile.exists())
-                {
-                   newFile.mkdir();
-                   System.out.println("Se creo dir:" + newFile.getName());
-                   node.setPathFile(newFile.getPath()); 
-                   
-                   grupos.add(node);
-                   
-                   //Comenzar hilo que checará cuando llegue algo a grupo especificado
-                   Thread hiloEspecificoGrupo = new Thread(new GrupoServer(node.getNumSocket(), node));
-                   hiloEspecificoGrupo.start();
-                }else{
-                   System.out.println("Ya existe dicho grupo");
-                  
-               }
-               
-               
-           }catch(Exception e){
-               System.out.println(e.toString());
-               puertoNum--;
-           }
-           
-       }
-       
-   }
+    private void insertaGrupo() {
+        if (!txtNameGroup.getText().equals("") && !txtPIN.getText().equals("")) {
+            String[] arrayDate = txtDate.getText().split("/");
+            puertoNum++;
+            Nodo node = new Nodo(txtNameGroup.getText().toString(), txtPIN.getText().toString(), Integer.parseInt(arrayDate[0]), Integer.parseInt(arrayDate[1]), Integer.parseInt(arrayDate[2]), puertoNum);
+
+            boolean existe = false;
+            for (Nodo n : grupos) {
+                if (n.getPin().equals(node.getPin())) {
+                    existe = true;
+                }
+            }
+
+            if (!existe) {
+                File newFile = new File(node.getPin());
+
+                try {
+
+                    if (!newFile.exists()) {
+                        newFile.mkdir();
+                        System.out.println("Se creo dir: " + newFile.getName());
+                        node.setPathFile(newFile.getPath());
+                    } else {
+                        System.out.println("Ya existe dicho directorio");
+                        node.setPathFile(newFile.getPath());
+                    }
+                    grupos.add(node);
+
+                    //Comenzar hilo que checará cuando llegue algo a grupo especificado
+                    Thread hiloEspecificoGrupo = new Thread(new GrupoServer(node.getNumSocket(), node));
+                    hiloEspecificoGrupo.start();
+
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+
+                Grupos.guardarNodos(grupos);
+            } else {
+                System.out.println("Ya existe el grupo");
+            }
+        }
+
+    }
     /**
      * @param args the command line arguments
      */

@@ -21,6 +21,17 @@ public class Nodo {
         this.numSocket = numSocket;
     }
     
+        public Nodo(String grupoNombre, String pin, int day, int month, int year, int numSocket, String pathFile) {
+        this.grupoNombre = grupoNombre;
+        this.pin = pin;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.numSocket = numSocket;
+        this.pathFile = pathFile;
+    }
+    
+    
     private String grupoNombre;
 
     
