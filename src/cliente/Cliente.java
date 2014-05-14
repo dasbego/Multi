@@ -6,15 +6,32 @@
 
 package cliente;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,24 +44,26 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     private DataInputStream datoEntrada;
     private DataOutputStream datoSalida;
     private static String Puerto;
+    private Map<Integer,String> downloadPaths;
+    private int downloadIndex;
     
     /**
      * Creates new form Cliente
      */
     public Cliente(String puerto) {
-        
         initComponents();
         try {
+            downloadPaths = new HashMap<Integer, String>();
             this.Puerto = puerto;
             System.out.println("Puerto recibido en ventana cliente: "+Puerto);
             System.out.println("Abriendo socket...");
+            Thread hilo = new Thread(this);
+            hilo.start();
             socket = new Socket("192.168.1.78", Integer.parseInt(Puerto));
             datoEntrada = new DataInputStream(socket.getInputStream());
             datoSalida = new DataOutputStream(socket.getOutputStream());
             System.out.println("Se manda: NewUser*"+UserName+" :");
             datoSalida.writeUTF("NewUser*"+UserName+" :");
-            Thread hilo = new Thread(this);
-            hilo.start();
             
            
         } catch (Exception e) {
@@ -68,11 +87,12 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         jList1 = new javax.swing.JList();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtMensaje = new javax.swing.JTextArea();
+        jFileChooser1 = new javax.swing.JFileChooser();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        UploadOption = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -92,6 +112,15 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
 
         jList1.setModel(dlm);
         jScrollPane2.setViewportView(jList1);
+        jList1.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent evt){
+                JList list = (JList)evt.getSource();
+                if(evt.getClickCount() == 2){
+                    downloadIndex = list.locationToIndex(evt.getPoint());
+                    petitionForDownload(downloadIndex);
+                }
+            }
+        });
 
         txtMensaje.setColumns(20);
         txtMensaje.setRows(5);
@@ -111,8 +140,13 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
 
         jMenu2.setText("Enviar...");
 
-        jMenuItem2.setText("Archivo");
-        jMenu2.add(jMenuItem2);
+        UploadOption.setText("Archivo");
+        UploadOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UploadOptionActionPerformed(evt);
+            }
+        });
+        jMenu2.add(UploadOption);
 
         jMenuBar1.add(jMenu2);
 
@@ -170,6 +204,142 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void UploadOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadOptionActionPerformed
+        // TODO add your handling code here:
+        petitionForUpload();
+    }//GEN-LAST:event_UploadOptionActionPerformed
+
+    private String[] separatePaths(String bigPath){
+        if (bigPath.contains("filesNames*")){
+            bigPath = bigPath.replace("filesNames*", "");
+            String paths[] = bigPath.split("\\*");
+            return paths;
+        }
+        return null;
+    }
+    
+    private void petitionForUpload(){
+        try {
+            //petición para hacer upload
+            datoSalida.writeUTF("NewFile*"+UserName);
+            
+            //debe esperar respuesta del server para ver a qué puerto se conecta
+            String info = datoEntrada.readUTF();
+            
+            //separamos string IP*Puerto
+            /*
+            IP - 0
+            Puerto - 1
+            */
+            final String[] data = info.split("\\*");
+            
+            //crear nuevo hilo para conectarse a ese puerto y subir el archivo
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        //conexion a socket para subir 
+                        Socket uploadSocket = new Socket(data[0], Integer.parseInt(data[1]));
+                        
+                        DataInputStream UploadDatoEntrada = new DataInputStream(socket.getInputStream());;
+                        DataOutputStream UploadDatoSalida = new DataOutputStream(socket.getOutputStream());
+                        
+                        //parametros para archivos que se peuden subir
+                        
+                        //Iniciar upload por ese socket
+                        int returnVal = jFileChooser1.showOpenDialog(Cliente.this);
+                        
+                        if(returnVal == JFileChooser.APPROVE_OPTION){
+                            File file = jFileChooser1.getSelectedFile();
+                            String pathToSelectedFile = file.getAbsolutePath();
+                            
+                            //empezar upload
+                        }
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }).start();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void petitionForDownload(int index){
+        try {
+            //encontrar path correspondiente al index
+            String Path = downloadPaths.get(index);
+            
+            //sacar IP
+            String IP = InetAddress.getLocalHost().getHostAddress();
+            //petición para hacer download
+            System.out.println("FilePath*"+IP+"*"+"PUERTO"+"*"+Path);
+            datoSalida.writeUTF("FilePath*"+IP+"*"+"PUERTO"+"*"+Path);
+            
+            String info = datoEntrada.readUTF();
+            
+            //separamos string FilePath*IP*Puerto*PathAlArchivo
+            /*
+            filePath - 0
+            IP - 1
+            Puerto - 2
+            PathAlArchivo - 3
+            */
+            final String data[] = info.split("\\*");
+            
+            // tamano del archivo
+            final int FILESIZE = 6022386;
+            
+            //iniciar nuevo hilo para bajar
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        //conexion a socket para subir 
+                        Socket downloadSocket = new Socket(data[1], Integer.parseInt(data[2]));
+                        
+                        DataInputStream DownloadDatoEntrada = new DataInputStream(socket.getInputStream());;
+                        DataOutputStream DownloadDatoSalida = new DataOutputStream(socket.getOutputStream());
+                        
+                        int bytesRead;
+                        int current = 0;
+                        FileOutputStream fos = null;
+                        BufferedOutputStream bos = null;
+                        
+                        // receive file
+                        byte [] mybytearray  = new byte [FILESIZE];
+                        InputStream is = downloadSocket.getInputStream();
+                        fos = new FileOutputStream(data[3]);
+                        bos = new BufferedOutputStream(fos);
+                        bytesRead = is.read(mybytearray,0,mybytearray.length);
+                        current = bytesRead;
+
+                        do {
+                           bytesRead =
+                              is.read(mybytearray, current, (mybytearray.length-current));
+                           if(bytesRead >= 0) current += bytesRead;
+                        } while(bytesRead > -1);
+
+                        bos.write(mybytearray, 0 , current);
+                        bos.flush();
+                        System.out.println("File " + data[3]
+                            + " downloaded (" + current + " bytes read)");
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }).start();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -196,7 +366,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             java.util.logging.Logger.getLogger(Cliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -206,14 +376,15 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem UploadOption;
     private javax.swing.JButton btnEnviar;
+    private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JList jList1;
     private DefaultListModel dlm = new DefaultListModel();
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -223,6 +394,28 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
 
     @Override
     public void run() {
-     
+            try {
+                //String info = datoEntrada.readUTF();
+                String info = "filesNames*path/pito.txt*path/verga.pdf";
+                if(info.contains("filesNames*")){
+                    int ind = 0;
+                    String Paths[] = separatePaths(info);
+                    
+                    for (String string : Paths) {
+                        //add en  la lista y diccionario
+                        //nombre de archivo
+                        System.out.println(string);
+                        String name[] = string.split("/");
+                        dlm.addElement(name[name.length-1]);
+                        jList1.setModel(dlm);
+                        
+                        //al diccionario
+                        downloadPaths.put(ind, string);
+                        ind++;
+                    }
+                }
+            }catch (Exception ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.4" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
@@ -24,10 +24,13 @@
             <Property name="text" type="java.lang.String" value="Enviar..."/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+            <MenuItem class="javax.swing.JMenuItem" name="UploadOption">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Archivo"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UploadOptionActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -135,6 +138,7 @@
             </Property>
           </Properties>
           <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jList1.addMouseListener(new MouseAdapter(){ &#xa;    public void mouseClicked(MouseEvent evt){&#xa;        JList list = (JList)evt.getSource();&#xa;        if(evt.getClickCount() == 2){&#xa;            downloadIndex = list.locationToIndex(evt.getPoint());&#xa;            petitionForDownload(downloadIndex);&#xa;        }&#xa;    }&#xa;});"/>
             <AuxValue name="JavaCodeGenerator_DeclarationPost" type="java.lang.String" value="private DefaultListModel dlm = new DefaultListModel();"/>
           </AuxValues>
         </Component>
@@ -155,5 +159,7 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JFileChooser" name="jFileChooser1">
+    </Component>
   </SubComponents>
 </Form>
