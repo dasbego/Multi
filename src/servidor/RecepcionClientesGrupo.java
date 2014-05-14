@@ -44,23 +44,22 @@ public class RecepcionClientesGrupo implements Runnable{
                 String mensaje = datosEntrada.readUTF();
                 System.out.println("Al servidor de pin:"+node.getPin()+ " ha llegado: " +mensaje);
                 
-                if(mensaje.contains("NewUser*")){
+                if (mensaje.contains("NewUser*")){
                     System.out.println("Ingreso de nuevo usuario, mandando: "+getFilesFromPath(node.getPathFile()));
                     datosSalida.writeUTF(getFilesFromPath(node.getPathFile()));
                 }
-              
-                //FilePath*IP*Puerto*PathAlArchivo
-                if(mensaje.contains("FilePath*")){
-                      String[] arrayData = mensaje.split("*");
-                      Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
-                      SenderThread.start();
-                }
-                if(mensaje.contains("NewFile*")){
-                      
-                }
-                
-                
-                datosSalida.writeUTF(mensaje);
+                    //FilePath*IP*Puerto*PathAlArchivo
+                   else if(mensaje.contains("FilePath*")){
+                          String[] arrayData = mensaje.split("*");
+                          Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
+                          SenderThread.start();
+                    }
+                    else if(mensaje.contains("NewFile*")){
+                            //MISSING CODE
+                     }
+                        else{
+                           datosSalida.writeUTF(mensaje);
+                            }
                 
                     
             }                
