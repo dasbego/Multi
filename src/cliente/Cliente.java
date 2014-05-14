@@ -277,10 +277,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             //sacar IP
             String IP = InetAddress.getLocalHost().getHostAddress();
             //petición para hacer download
-            datoSalida.writeUTF("FilePath*"+IP+"*"+Path);
-            
-            //recibo string con puerto
-            String info = datoEntrada.readUTF();
+            final String info = "FilePath*"+"10.49.183.94"+"*"+"13267"+"*"+Path;
             
             //separamos string FilePath*IP*Puerto*PathAlArchivo
             /*
@@ -299,18 +296,23 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
 
                 @Override
                 public void run() {
+                    int bytesRead;
+                    int current = 0;
+                    FileOutputStream fos = null;
+                    BufferedOutputStream bos = null;
+                    
                     try {
                         //conexion a socket para subir 
-                        System.out.println("procesando descarga...");
+                        System.out.println("conectando...");
+                        
+                        System.out.println("Enviando info!!");
+                        datoSalida.writeUTF(info);
                         Socket downloadSocket = new Socket(data[1], Integer.parseInt(data[2]));
                         
-                        DataInputStream DownloadDatoEntrada = new DataInputStream(socket.getInputStream());;
-                        DataOutputStream DownloadDatoSalida = new DataOutputStream(socket.getOutputStream());
+                        System.out.println("conectado!!");
                         
-                        int bytesRead;
-                        int current = 0;
-                        FileOutputStream fos = null;
-                        BufferedOutputStream bos = null;
+                        //DataInputStream DownloadDatoEntrada = new DataInputStream(socket.getInputStream());;
+                        //DataOutputStream DownloadDatoSalida = new DataOutputStream(socket.getOutputStream());
                         
                         // receive file
                         byte [] mybytearray  = new byte [FILESIZE];
@@ -334,10 +336,18 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                         
                     } catch (IOException ex) {
                         Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                    }finally {
+                        try {
+                            System.out.println("Cerrando puertos de descarga");
+                            if (fos != null) fos.close();
+                            if (bos != null) bos.close();
+                            System.out.println("Cerrados");
+                        } catch (IOException ex) {
+                            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }).start();
-            
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
