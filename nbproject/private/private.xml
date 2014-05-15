@@ -5,8 +5,8 @@
         <group>
             <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/cliente/Cliente.java</file>
             <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/cliente/pinWindow.java</file>
-            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/FilesSender.java</file>
-            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/ServerUI.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/GrupoServer.java</file>
+            <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/cliente/FilesSender.java</file>
             <file>file:/Users/bego/NetBeansProjects/ProyectoChat/src/servidor/RecepcionClientesGrupo.java</file>
         </group>
     </open-files>

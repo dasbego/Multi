@@ -57,7 +57,8 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             this.Puerto = puerto;
             System.out.println("Puerto recibido en ventana cliente: "+Puerto);
             System.out.println("Abriendo socket...");
-            socket = new Socket("10.49.183.94", Integer.parseInt(Puerto));
+            //socket = new Socket("10.49.183.94", Integer.parseInt(Puerto));
+            socket = new Socket("127.0.0.1", Integer.parseInt(Puerto));
             datoEntrada = new DataInputStream(socket.getInputStream());
             datoSalida = new DataOutputStream(socket.getOutputStream());
             Thread hilo = new Thread(this);
@@ -220,21 +221,32 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     
     private void petitionForUpload(){
         try {
-            //petición para hacer upload
-            datoSalida.writeUTF("NewFile*"+UserName);
+            //empezar upload
+            final String IP = InetAddress.getLocalHost().getHostAddress();
             
-            //debe esperar respuesta del server para ver a qué puerto se conecta
-            String info = datoEntrada.readUTF();
+            final String info = "NewFile*"+"127.0.0.1"+"*13267*";
+            
+            //Iniciar upload por ese socket
+            int returnVal = jFileChooser1.showOpenDialog(Cliente.this);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION){
+                File file = jFileChooser1.getSelectedFile();
+                String pathToSelectedFile = file.getAbsolutePath();
+                
+                System.out.println("Enviando datos al server:"+info+pathToSelectedFile);
+                datoSalida.writeUTF(info+pathToSelectedFile);
+                new Thread(new FilesSender(pathToSelectedFile, IP, "13267")).start();
+            }
             
             //separamos string IP*Puerto
             /*
             IP - 0
             Puerto - 1
             */
-            final String[] data = info.split("\\*");
+            //final String[] data = info.split("\\*");
             
             //crear nuevo hilo para conectarse a ese puerto y subir el archivo
-            new Thread(new Runnable() {
+            /*new Thread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -242,26 +254,21 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                         //conexion a socket para subir 
                         Socket uploadSocket = new Socket(data[0], Integer.parseInt(data[1]));
                         
+                        //petición para hacer upload
+                        datoSalida.writeUTF(info);
+                        
                         DataInputStream UploadDatoEntrada = new DataInputStream(socket.getInputStream());;
                         DataOutputStream UploadDatoSalida = new DataOutputStream(socket.getOutputStream());
                         
                         //parametros para archivos que se peuden subir
                         
-                        //Iniciar upload por ese socket
-                        int returnVal = jFileChooser1.showOpenDialog(Cliente.this);
                         
-                        if(returnVal == JFileChooser.APPROVE_OPTION){
-                            File file = jFileChooser1.getSelectedFile();
-                            String pathToSelectedFile = file.getAbsolutePath();
-                            
-                            //empezar upload
-                        }
                         
                     } catch (IOException ex) {
                         Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }).start();
+            }).start();*/
             
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -277,7 +284,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             //sacar IP
             String IP = InetAddress.getLocalHost().getHostAddress();
             //petición para hacer download
-            final String info = "FilePath*"+"10.49.183.94"+"*"+"13267"+"*"+Path;
+            final String info = "FilePath*"+"127.0.0.1"+"*"+"13267"+"*"+Path;
             
             //separamos string FilePath*IP*Puerto*PathAlArchivo
             /*
@@ -415,6 +422,8 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
                 if(info.contains("filesNames*")){
                     int ind = 0;
                     String Paths[] = separatePaths(info);
+                    dlm.clear();
+                    downloadPaths.clear();
                     
                     for (String string : Paths) {
                         //add en  la lista y diccionario

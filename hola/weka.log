@@ -1,0 +1,34 @@
+2014-04-10 16:00:16 weka.gui.GUIChooser main
+INFO: Logging started
+---Registering Weka Editors---
+Trying to add database driver (JDBC): RmiJdbc.RJDriver - Error, not in CLASSPATH?
+Trying to add database driver (JDBC): jdbc.idbDriver - Error, not in CLASSPATH?
+Trying to add database driver (JDBC): org.gjt.mm.mysql.Driver - Error, not in CLASSPATH?
+Trying to add database driver (JDBC): com.mckoi.JDBCDriver - Error, not in CLASSPATH?
+Trying to add database driver (JDBC): org.hsqldb.jdbcDriver - Error, not in CLASSPATH?
+2014-04-10 16:01:05 weka.gui.explorer.Explorer <init>
+INFO: Weka Explorer
+2014-04-10 16:01:05 weka.gui.explorer.Explorer <init>
+INFO: (c) 1999-2013 The University of Waikato, Hamilton, New Zealand
+2014-04-10 16:01:05 weka.gui.explorer.Explorer <init>
+INFO: web: http://www.cs.waikato.ac.nz/~ml/weka/
+2014-04-10 16:01:05 weka.gui.explorer.Explorer <init>
+INFO: Started on jueves, 10 abril 2014
+2014-04-10 16:03:47 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Started weka.classifiers.trees.J48
+2014-04-10 16:03:47 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Command:weka.classifiers.trees.J48 -C 0.25 -M 2
+2014-04-10 16:03:47 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Finished weka.classifiers.trees.J48
+2014-04-10 16:18:24 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Started weka.classifiers.trees.J48
+2014-04-10 16:18:24 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Command:weka.classifiers.trees.J48 -C 0.25 -M 2
+2014-04-10 16:18:24 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Finished weka.classifiers.trees.J48
+2014-04-10 16:18:32 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Started weka.classifiers.trees.J48
+2014-04-10 16:18:32 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Command:weka.classifiers.trees.J48 -C 0.25 -M 2
+2014-04-10 16:18:32 weka.gui.explorer.ClassifierPanel$16 run
+INFO: Finished weka.classifiers.trees.J48

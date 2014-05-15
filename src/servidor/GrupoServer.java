@@ -9,6 +9,7 @@ package servidor;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketImpl;
+import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 
 /**
@@ -18,7 +19,7 @@ import javax.swing.JTextArea;
 public class GrupoServer implements Runnable {
     private Nodo node;
     private int sockerPort;
-
+    private DefaultListModel x  = new DefaultListModel<Object>();
    
    public GrupoServer(int sockerPort, Nodo node)
     {
@@ -35,7 +36,7 @@ public class GrupoServer implements Runnable {
             while(true)
             {
                 Socket socket = socketServidor.accept();
-                Thread hilo = new Thread(new RecepcionClientesGrupo( socket, node));
+                Thread hilo = new Thread(new RecepcionClientesGrupo( socket, node,x));
                 hilo.start();
             }
             

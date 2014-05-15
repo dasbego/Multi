@@ -28,7 +28,8 @@ public class pinWindow extends javax.swing.JFrame {
     public pinWindow() {
         initComponents();
         try {
-            socket = new Socket("10.49.183.94", 9997);
+            socket = new Socket("127.0.0.1", 9997);
+            //socket = new Socket("10.49.183.94", 9997);
             datoEntrada = new DataInputStream(socket.getInputStream());
             
             datoSalida = new DataOutputStream(socket.getOutputStream());
