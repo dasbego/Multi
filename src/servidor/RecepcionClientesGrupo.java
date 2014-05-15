@@ -63,7 +63,13 @@ public class RecepcionClientesGrupo implements Runnable, ListDataListener{
                 }
               
                 //FilePath*IP*Puerto*PathAlArchivo
+<<<<<<< HEAD
                 else if(mensaje.contains("FilePath*")){    
+=======
+                else if(mensaje.contains("FilePath*")){
+                    
+                        
+>>>>>>> FETCH_HEAD
                       String[] arrayData = mensaje.split("\\*");
                       Thread SenderThread = new Thread(new FilesSender(arrayData[3], arrayData[1], arrayData[2]));
                       SenderThread.start();
