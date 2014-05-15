@@ -37,7 +37,7 @@ public class FilesSender implements Runnable {
           System.out.println("Data: path: "+ path + "ip: "+ip+ " puerto: "+ socketPort);
             try{
                 
-                socket = new ServerSocket(13267);
+                socket = new ServerSocket(Integer.parseInt(socketPort));
                 sock = socket.accept();
                 
                 System.out.println("hola");

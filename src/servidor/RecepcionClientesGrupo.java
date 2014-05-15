@@ -151,13 +151,14 @@ public class RecepcionClientesGrupo implements Runnable, ListDataListener{
     
      private String getFilesFromPath(String path)
         {
+            System.out.println(path);
             String resultFiles = "filesNames*";
             File directory = new File(path);
             File[] contents = directory.listFiles();
 
             for ( File f : contents) {
                 resultFiles+=f.getPath() + "*";
-                //System.out.println(resultFiles);
+                System.out.println(resultFiles);
             }
             return resultFiles;        
         }
